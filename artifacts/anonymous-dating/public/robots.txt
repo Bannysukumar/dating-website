@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /chat
+Disallow: /matching
+Disallow: /api/
+
+Sitemap: https://aura.app/sitemap.xml
+
+# Speed hint
+Crawl-delay: 1

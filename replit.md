@@ -1,3 +1,8 @@
+# Aura - Anonymous Dating & Video Chat Platform
+
+## App Description
+Real-time anonymous dating/video chat web app. No signup required. Males match with females only via Socket.io matchmaking. WebRTC peer-to-peer video calls. Full SEO/growth optimization implemented.
+
 # Workspace
 
 ## Overview

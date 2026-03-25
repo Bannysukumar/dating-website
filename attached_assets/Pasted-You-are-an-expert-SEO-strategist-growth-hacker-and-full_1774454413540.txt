@@ -1,0 +1,165 @@
+You are an expert SEO strategist, growth hacker, and full-stack performance engineer.
+
+My website is already built (React + Node.js anonymous dating platform with real-time chat and video calling).
+
+Your job is to FULLY AUDIT, OPTIMIZE, and SCALE this website to achieve at least 100,000 monthly users.
+
+Do not give generic advice. Perform deep technical SEO, growth strategy, and conversion optimization.
+
+-----------------------------------
+🔍 PHASE 1: FULL WEBSITE AUDIT
+-----------------------------------
+1. Analyze:
+   - Page speed (Core Web Vitals)
+   - SEO structure
+   - Meta tags
+   - Mobile responsiveness
+   - Accessibility
+   - Performance bottlenecks
+   - Broken links
+   - Duplicate content
+
+2. Fix all issues:
+   - Optimize images (lazy loading, compression)
+   - Minify CSS/JS
+   - Enable caching
+   - Improve Time To First Byte (TTFB)
+
+-----------------------------------
+⚡ PHASE 2: TECHNICAL SEO
+-----------------------------------
+Implement:
+
+1. Advanced Meta Tags:
+   - Dynamic title + description per page
+   - Open Graph (og:title, og:image, og:description)
+   - Twitter cards
+
+2. Structured Data (Schema.org):
+   - WebSite schema
+   - WebPage schema
+   - FAQ schema
+
+3. Sitemap + Robots:
+   - Generate sitemap.xml
+   - Optimize robots.txt
+
+4. URL Optimization:
+   - Clean SEO-friendly URLs
+
+5. Internal Linking Strategy:
+   - Connect all pages smartly
+
+-----------------------------------
+📈 PHASE 3: CONTENT + VIRAL SEO
+-----------------------------------
+Create SEO pages targeting high-traffic keywords:
+
+Pages to create:
+- /random-video-chat
+- /anonymous-chat
+- /chat-with-strangers
+- /free-online-dating-no-signup
+
+Each page must include:
+- 1000+ words SEO content
+- Keyword optimization
+- Headings (H1, H2, H3)
+- FAQs
+- Call-to-action (Start Chat)
+
+Target keywords:
+- "anonymous video chat"
+- "chat with strangers online free"
+- "random video call website"
+- "dating without signup"
+
+-----------------------------------
+🚀 PHASE 4: GROWTH HACKING
+-----------------------------------
+
+1. Viral Loop:
+   - Add "Invite Friend" feature
+   - Referral system
+
+2. Social Sharing:
+   - Auto share after match
+   - Share buttons (WhatsApp, Telegram, Twitter)
+
+3. Landing Page Optimization:
+   - Strong headline
+   - Clear CTA
+   - Testimonials (fake/demo for now)
+
+4. Retention:
+   - Add "Continue where you left"
+   - Session restore
+
+-----------------------------------
+🔥 PHASE 5: TRAFFIC STRATEGY
+-----------------------------------
+
+1. Programmatic SEO:
+   - Auto-generate hundreds of pages targeting long-tail keywords
+
+2. Reddit + Quora Strategy:
+   - Generate posts that drive traffic
+
+3. Short Video Strategy:
+   - Create scripts for Instagram Reels, YouTube Shorts
+
+4. Backlinks:
+   - Generate backlink strategy
+   - List websites to submit
+
+-----------------------------------
+📊 PHASE 6: ANALYTICS
+-----------------------------------
+
+Integrate:
+- Google Analytics
+- Google Search Console
+- Track:
+   - Users
+   - Bounce rate
+   - Session duration
+
+-----------------------------------
+💰 PHASE 7: MONETIZATION (OPTIONAL)
+-----------------------------------
+
+- Ads integration (Google AdSense)
+- Premium features
+- Boost profile
+
+-----------------------------------
+⚙️ PHASE 8: PERFORMANCE BOOST
+-----------------------------------
+
+- Code splitting
+- Lazy loading components
+- CDN usage
+- Optimize React rendering
+
+-----------------------------------
+🎯 FINAL GOAL
+-----------------------------------
+
+Achieve:
+- 100K monthly users
+- Fast loading (<2s)
+- SEO score 90+
+- High engagement
+
+-----------------------------------
+📤 OUTPUT REQUIRED
+-----------------------------------
+
+Provide:
+1. Full optimized code changes
+2. SEO content for all pages
+3. Growth strategy plan
+4. Exact implementation steps
+5. Scripts for viral marketing
+
+Act like a startup growth team and DO WHATEVER is needed to reach 100K users.
