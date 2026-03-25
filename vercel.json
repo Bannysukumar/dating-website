@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd artifacts/anonymous-dating && pnpm run build",
+  "buildCommand": "pnpm --filter @workspace/anonymous-dating run build",
   "outputDirectory": "artifacts/anonymous-dating/dist/public",
   "installCommand": "pnpm install",
   "env": {
