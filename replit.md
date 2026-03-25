@@ -3,6 +3,37 @@
 ## App Description
 Real-time anonymous dating/video chat web app. No signup required. Males match with females only via Socket.io matchmaking. WebRTC peer-to-peer video calls. Full SEO/growth optimization implemented.
 
+## Pages
+- `/` — Home with alias, gender, interests form + live stats + testimonials + share panel
+- `/matching` — Animated matchmaking queue
+- `/chat` — WebRTC video + text chat with timer, sounds, notifications, profanity filter
+- `/profile` — Temp profile editor (name, gender, interests) + recent match history
+- `/faq` — 20+ SEO-optimized FAQ questions in 5 categories
+- `/contact` — Contact form (stored in localStorage)
+- `/about`, `/privacy`, `/terms` — Info pages
+- `/random-video-chat`, `/anonymous-chat`, `/chat-with-strangers`, `/free-online-dating-no-signup` — SEO landing pages
+
+## Features
+- Interest-based smart matching (backend prefers users with shared interests)
+- Dark / Light mode toggle (persisted in localStorage)
+- EN / Telugu language toggle
+- Match session timer in chat header
+- Web Audio API sound effects: match found, message received, disconnect
+- Browser push notifications for messages when tab is inactive
+- Client + server profanity filter on text messages
+- Auto-disconnect inactive sessions after 30 minutes (backend)
+- Blocked pairs after report (no rematch with reported user)
+- Recent matches saved locally (last 10), shown in Profile
+- Interests passed to matchmaking queue, shown in chat header
+
+## Architecture
+- Frontend: React + Vite + Wouter + Zustand + TanStack Query + Framer Motion
+- Backend: Express + Socket.io (path: /api/socket.io)
+- WebRTC: P2P via STUN (stun.l.google.com), signaling relayed via socket
+- State: Zustand with persist (user + recentMatches + theme + language in localStorage)
+- Code splitting: Vite manualChunks (vendor-react, vendor-motion, vendor-socket, vendor-query)
+- Lazy loading: All non-critical routes lazy loaded with Suspense
+
 # Workspace
 
 ## Overview

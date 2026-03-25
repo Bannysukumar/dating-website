@@ -18,8 +18,12 @@ export default function Matching() {
 
     const socket = getSocket();
 
-    // Join queue on mount
-    socket.emit("join_queue", { name: user.name, gender: user.gender });
+    // Join queue on mount (include interests for smarter matching)
+    socket.emit("join_queue", {
+      name: user.name,
+      gender: user.gender,
+      interests: user.interests ?? [],
+    });
 
     // Listen for match
     const handleMatch = (data: { roomId: string; partner: any; isInitiator: boolean }) => {

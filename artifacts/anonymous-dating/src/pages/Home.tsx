@@ -30,7 +30,17 @@ export default function Home() {
 
   const [name, setName] = useState(user?.name || "");
   const [gender, setGender] = useState<Gender | "">(user?.gender || "");
+  const [interests, setInterests] = useState<string[]>(user?.interests || []);
+  const [interestInput, setInterestInput] = useState("");
   const [showShare, setShowShare] = useState(false);
+
+  const addInterest = () => {
+    const val = interestInput.trim().toLowerCase();
+    if (val && !interests.includes(val) && interests.length < 5) {
+      setInterests((p) => [...p, val]);
+      setInterestInput("");
+    }
+  };
 
   useSEO({
     title: "Aura - Anonymous Video Chat & Dating | Meet Strangers Instantly",
@@ -51,7 +61,7 @@ export default function Home() {
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !gender) return;
-    setUser({ name: name.trim(), gender: gender as Gender });
+    setUser({ name: name.trim(), gender: gender as Gender, interests });
     setIsQueueing(true);
     setLocation("/matching");
   };
@@ -149,6 +159,36 @@ export default function Home() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Interests */}
+            <div className="space-y-2 relative">
+              <label className="text-sm font-semibold text-white/90 ml-1">
+                Interests <span className="text-white/40 font-normal">(optional · up to 5)</span>
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={interestInput}
+                  onChange={(e) => setInterestInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addInterest(); }}}
+                  placeholder="music, gaming, travel..."
+                  className="flex-1 bg-black/20 border border-white/10 rounded-2xl py-3 px-4 text-white placeholder:text-white/30 focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                />
+                <button type="button" onClick={addInterest} className="px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 text-sm font-medium">
+                  Add
+                </button>
+              </div>
+              {interests.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {interests.map((i) => (
+                    <span key={i} className="px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-white text-xs flex items-center gap-1">
+                      {i}
+                      <button type="button" onClick={() => setInterests((p) => p.filter((x) => x !== i))} className="ml-1 opacity-60 hover:opacity-100">×</button>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
 
             <Button

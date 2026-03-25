@@ -1,0 +1,169 @@
+You are a senior full-stack developer, product designer, and growth engineer.
+
+My project is an anonymous dating website (React + Node.js + Socket.io + WebRTC) with:
+- No login/signup
+- Gender-based matching (Male ↔ Female)
+- Real-time chat
+- Video calling
+
+Your task is to EXPAND this project into a full multi-page platform with advanced features, better UX, and high retention.
+
+-----------------------------------
+📄 PHASE 1: CREATE MULTIPLE PAGES
+-----------------------------------
+
+Create the following pages with proper routing (React Router or Next.js routing):
+
+1. Home Page (/)
+   - Hero section with CTA: "Start Matching"
+   - Features section
+   - How it works
+   - Testimonials
+   - SEO optimized
+
+2. Matching Page (/match)
+   - Searching animation
+   - Real-time matching UI
+
+3. Chat + Video Page (/chat)
+   - Chat UI
+   - Video call UI (WebRTC)
+   - Controls (mute, end, skip)
+
+4. Profile Page (/profile)
+   - Temporary profile (from localStorage)
+   - Edit name, gender
+   - Session info
+
+5. About Page (/about)
+   - Platform details
+   - Mission
+
+6. Privacy Policy (/privacy)
+7. Terms & Conditions (/terms)
+
+8. Contact Page (/contact)
+   - Form (name, email, message)
+   - Store messages locally or backend
+
+9. FAQ Page (/faq)
+   - SEO optimized FAQs
+
+-----------------------------------
+⚡ PHASE 2: ADD ADVANCED FEATURES
+-----------------------------------
+
+1. Skip User Button:
+   - Instantly disconnect and find new match
+
+2. Typing Indicator:
+   - Show "User is typing..."
+
+3. Online Status:
+   - Show connected/disconnected
+
+4. Match Timer:
+   - Show session duration
+
+5. Interest Matching:
+   - Add optional interests input
+   - Match users with similar interests
+
+6. Dark / Light Mode:
+   - Toggle theme
+
+7. Multi-language Support:
+   - English + Telugu (basic)
+
+8. Sound Effects:
+   - Match found sound
+   - Message notification
+
+-----------------------------------
+🧠 PHASE 3: MATCHMAKING IMPROVEMENT
+-----------------------------------
+
+Improve algorithm:
+- Match based on:
+   - Gender
+   - Interests (if available)
+- Add queue priority system
+- Prevent same user rematch
+
+-----------------------------------
+🔐 PHASE 4: SAFETY FEATURES
+-----------------------------------
+
+1. Report User Button
+2. Block System (temporary)
+3. Auto disconnect after inactivity
+4. Basic profanity filter in chat
+
+-----------------------------------
+📊 PHASE 5: USER RETENTION
+-----------------------------------
+
+1. Recent Matches:
+   - Store last matched users locally
+
+2. Session Restore:
+   - Continue if page refresh
+
+3. Notification System:
+   - Browser notifications
+
+-----------------------------------
+🎨 PHASE 6: UI IMPROVEMENTS
+-----------------------------------
+
+- Modern glassmorphism design
+- Smooth animations (Framer Motion)
+- Mobile-first responsive design
+- Loading skeletons
+
+-----------------------------------
+📈 PHASE 7: SEO FOR ALL PAGES
+-----------------------------------
+
+For every page:
+- Unique meta title & description
+- Proper heading structure
+- Keyword optimization
+- Internal linking
+
+-----------------------------------
+⚙️ PHASE 8: CODE QUALITY
+-----------------------------------
+
+- Use reusable components
+- Clean folder structure:
+   /components
+   /pages
+   /hooks
+   /services
+   /context
+
+- Optimize performance:
+   - Lazy loading
+   - Code splitting
+
+-----------------------------------
+📤 FINAL OUTPUT
+-----------------------------------
+
+Provide:
+1. All new pages code
+2. Routing setup
+3. Feature implementations
+4. Updated backend (if needed)
+5. Clean UI components
+6. Step-by-step integration guide
+
+Make the project production-ready, scalable, and visually modern like top platforms.
+
+Think like you are building a startup product similar to:
+- Omegle
+- Chatroulette
+- Tinder (but anonymous)
+
+Do not give partial output. Build completely.

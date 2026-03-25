@@ -1,11 +1,27 @@
 import type { Server, Socket } from "socket.io";
 import { logger } from "./lib/logger";
 
+// ── Profanity Filter ──────────────────────────────────────────────────────────
+const PROFANITY_LIST = [
+  "fuck", "shit", "asshole", "bitch", "bastard", "cunt", "dick", "pussy",
+  "faggot", "nigger", "whore", "slut", "retard",
+];
+const profanityRe = new RegExp(`\\b(${PROFANITY_LIST.join("|")})\\b`, "gi");
+function filterMessage(text: string): string {
+  return text.replace(profanityRe, (m) => m[0] + "*".repeat(m.length - 1));
+}
+
+// ── Inactivity timeout (30 min) ───────────────────────────────────────────────
+const INACTIVITY_MS = 30 * 60 * 1000;
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 interface UserData {
   socketId: string;
   name: string;
   gender: "male" | "female";
+  interests?: string[];
   roomId?: string;
+  lastActivity: number;
 }
 
 interface Room {
@@ -14,11 +30,13 @@ interface Room {
   createdAt: Date;
 }
 
+// ── State ─────────────────────────────────────────────────────────────────────
 const maleQueue: UserData[] = [];
 const femaleQueue: UserData[] = [];
 const connectedUsers = new Map<string, UserData>();
 const rooms = new Map<string, Room>();
 const reportCount = new Map<string, number>();
+const blockedPairs = new Set<string>(); // "socketA:socketB"
 
 export function getStats() {
   return {
@@ -32,10 +50,54 @@ function generateRoomId(): string {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+function blockKey(a: string, b: string): string {
+  return [a, b].sort().join(":");
+}
+
+function countSharedInterests(a: UserData, b: UserData): number {
+  if (!a.interests?.length || !b.interests?.length) return 0;
+  return a.interests.filter((i) => b.interests!.includes(i)).length;
+}
+
+function findBestMatch(candidate: UserData, queue: UserData[]): number {
+  let bestIdx = -1;
+  let bestScore = -1;
+
+  for (let i = 0; i < queue.length; i++) {
+    const other = queue[i];
+    // Skip blocked pairs
+    if (blockedPairs.has(blockKey(candidate.socketId, other.socketId))) continue;
+
+    const score = countSharedInterests(candidate, other);
+    if (score > bestScore) {
+      bestScore = score;
+      bestIdx = i;
+    }
+  }
+
+  // Fallback: first available unblocked user
+  if (bestIdx === -1) {
+    bestIdx = queue.findIndex(
+      (u) => !blockedPairs.has(blockKey(candidate.socketId, u.socketId)),
+    );
+  }
+
+  return bestIdx;
+}
+
 function tryMatch(io: Server): void {
   while (maleQueue.length > 0 && femaleQueue.length > 0) {
+    const maleCandidate = maleQueue[0];
+
+    // Find best female for this male
+    const femaleIdx = findBestMatch(maleCandidate, femaleQueue);
+    if (femaleIdx === -1) {
+      maleQueue.shift(); // No valid female for this male right now
+      break;
+    }
+
     const male = maleQueue.shift()!;
-    const female = femaleQueue.shift()!;
+    const [female] = femaleQueue.splice(femaleIdx, 1);
 
     const maleSocket = io.sockets.sockets.get(male.socketId);
     const femaleSocket = io.sockets.sockets.get(female.socketId);
@@ -47,32 +109,37 @@ function tryMatch(io: Server): void {
     }
 
     const roomId = generateRoomId();
-    rooms.set(roomId, {
-      id: roomId,
-      users: [male.socketId, female.socketId],
-      createdAt: new Date(),
-    });
+    rooms.set(roomId, { id: roomId, users: [male.socketId, female.socketId], createdAt: new Date() });
 
     male.roomId = roomId;
     female.roomId = roomId;
+    male.lastActivity = Date.now();
+    female.lastActivity = Date.now();
     connectedUsers.set(male.socketId, male);
     connectedUsers.set(female.socketId, female);
 
     maleSocket.join(roomId);
     femaleSocket.join(roomId);
 
+    const sharedInterests = male.interests?.filter((i) => female.interests?.includes(i)) ?? [];
+
     maleSocket.emit("matched", {
       roomId,
-      partner: { name: female.name, gender: female.gender },
+      partner: { name: female.name, gender: female.gender, interests: female.interests },
       isInitiator: true,
+      sharedInterests,
     });
     femaleSocket.emit("matched", {
       roomId,
-      partner: { name: male.name, gender: male.gender },
+      partner: { name: male.name, gender: male.gender, interests: male.interests },
       isInitiator: false,
+      sharedInterests,
     });
 
-    logger.info({ roomId, male: male.name, female: female.name }, "Users matched");
+    logger.info(
+      { roomId, male: male.name, female: female.name, sharedInterests },
+      "Users matched",
+    );
   }
 }
 
@@ -101,72 +168,111 @@ function leaveCurrentRoom(io: Server, socket: Socket, userData: UserData): void 
 }
 
 function removeFromQueue(socketId: string): void {
-  const maleIdx = maleQueue.findIndex((u) => u.socketId === socketId);
-  if (maleIdx !== -1) maleQueue.splice(maleIdx, 1);
-  const femaleIdx = femaleQueue.findIndex((u) => u.socketId === socketId);
-  if (femaleIdx !== -1) femaleQueue.splice(femaleIdx, 1);
+  const mi = maleQueue.findIndex((u) => u.socketId === socketId);
+  if (mi !== -1) maleQueue.splice(mi, 1);
+  const fi = femaleQueue.findIndex((u) => u.socketId === socketId);
+  if (fi !== -1) femaleQueue.splice(fi, 1);
 }
 
+// ── Inactivity sweeper (runs every 5 min) ─────────────────────────────────────
+function startInactivitySweeper(io: Server) {
+  setInterval(() => {
+    const now = Date.now();
+    for (const [socketId, userData] of connectedUsers.entries()) {
+      if (userData.roomId && now - userData.lastActivity > INACTIVITY_MS) {
+        const sock = io.sockets.sockets.get(socketId);
+        if (sock) {
+          sock.emit("inactivity_disconnect", {});
+          leaveCurrentRoom(io, sock, userData);
+          removeFromQueue(socketId);
+          connectedUsers.delete(socketId);
+          sock.disconnect(true);
+          logger.info({ socketId }, "Disconnected inactive user");
+        }
+      }
+    }
+  }, 5 * 60 * 1000);
+}
+
+// ── Socket Handlers ───────────────────────────────────────────────────────────
 export function setupSocketHandlers(io: Server): void {
+  startInactivitySweeper(io);
+
   io.on("connection", (socket: Socket) => {
     logger.info({ socketId: socket.id }, "Socket connected");
 
-    socket.on("join_queue", (data: { name: string; gender: string }) => {
-      const gender = data.gender?.toLowerCase();
-      if (gender !== "male" && gender !== "female") {
-        socket.emit("error", { message: "Invalid gender" });
-        return;
-      }
-      if (!data.name || data.name.trim().length === 0) {
-        socket.emit("error", { message: "Name is required" });
-        return;
-      }
+    socket.on(
+      "join_queue",
+      (data: { name: string; gender: string; interests?: string[] }) => {
+        const gender = data.gender?.toLowerCase();
+        if (gender !== "male" && gender !== "female") {
+          socket.emit("error", { message: "Invalid gender" });
+          return;
+        }
+        if (!data.name || data.name.trim().length === 0) {
+          socket.emit("error", { message: "Name is required" });
+          return;
+        }
 
-      const existing = connectedUsers.get(socket.id);
-      if (existing) {
-        leaveCurrentRoom(io, socket, existing);
-        removeFromQueue(socket.id);
-      }
+        const existing = connectedUsers.get(socket.id);
+        if (existing) {
+          leaveCurrentRoom(io, socket, existing);
+          removeFromQueue(socket.id);
+        }
 
-      const userData: UserData = {
-        socketId: socket.id,
-        name: data.name.trim().substring(0, 50),
-        gender: gender as "male" | "female",
-      };
-      connectedUsers.set(socket.id, userData);
+        const interests = Array.isArray(data.interests)
+          ? data.interests.map((i) => String(i).toLowerCase().trim()).filter(Boolean).slice(0, 8)
+          : [];
 
-      if (gender === "male") {
-        maleQueue.push(userData);
-      } else {
-        femaleQueue.push(userData);
-      }
+        const userData: UserData = {
+          socketId: socket.id,
+          name: data.name.trim().substring(0, 50),
+          gender: gender as "male" | "female",
+          interests,
+          lastActivity: Date.now(),
+        };
+        connectedUsers.set(socket.id, userData);
 
-      socket.emit("queued", { position: gender === "male" ? maleQueue.length : femaleQueue.length });
-      logger.info({ socketId: socket.id, name: userData.name, gender }, "User joined queue");
-      tryMatch(io);
-    });
+        if (gender === "male") maleQueue.push(userData);
+        else femaleQueue.push(userData);
+
+        socket.emit("queued", {
+          position: gender === "male" ? maleQueue.length : femaleQueue.length,
+        });
+        logger.info(
+          { socketId: socket.id, name: userData.name, gender, interests },
+          "User joined queue",
+        );
+        tryMatch(io);
+      },
+    );
 
     socket.on("leave_queue", () => {
       removeFromQueue(socket.id);
       socket.emit("queue_left", {});
     });
 
-    socket.on("send_message", (data: { roomId: string; message: string; timestamp: number }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user || user.roomId !== data.roomId) return;
-      if (!data.message || data.message.trim().length === 0) return;
+    socket.on(
+      "send_message",
+      (data: { roomId: string; message: string; timestamp: number }) => {
+        const user = connectedUsers.get(socket.id);
+        if (!user || user.roomId !== data.roomId) return;
+        if (!data.message || data.message.trim().length === 0) return;
 
-      const message = data.message.substring(0, 1000);
-      socket.to(data.roomId).emit("receive_message", {
-        name: user.name,
-        message,
-        timestamp: data.timestamp || Date.now(),
-      });
-    });
+        user.lastActivity = Date.now();
+        const message = filterMessage(data.message.substring(0, 1000));
+        socket.to(data.roomId).emit("receive_message", {
+          name: user.name,
+          message,
+          timestamp: data.timestamp || Date.now(),
+        });
+      },
+    );
 
     socket.on("typing", (data: { roomId: string }) => {
       const user = connectedUsers.get(socket.id);
       if (!user || user.roomId !== data.roomId) return;
+      user.lastActivity = Date.now();
       socket.to(data.roomId).emit("partner_typing", {});
     });
 
@@ -176,7 +282,7 @@ export function setupSocketHandlers(io: Server): void {
       socket.to(data.roomId).emit("partner_stopped_typing", {});
     });
 
-    socket.on("disconnect_partner", (data: { roomId: string }) => {
+    socket.on("disconnect_partner", () => {
       const user = connectedUsers.get(socket.id);
       if (!user) return;
       leaveCurrentRoom(io, socket, user);
@@ -210,7 +316,9 @@ export function setupSocketHandlers(io: Server): void {
       if (user.gender === "male") maleQueue.push(user);
       else femaleQueue.push(user);
 
-      socket.emit("queued", { position: user.gender === "male" ? maleQueue.length : femaleQueue.length });
+      socket.emit("queued", {
+        position: user.gender === "male" ? maleQueue.length : femaleQueue.length,
+      });
       tryMatch(io);
     });
 
@@ -224,6 +332,8 @@ export function setupSocketHandlers(io: Server): void {
         if (partnerId) {
           const count = (reportCount.get(partnerId) || 0) + 1;
           reportCount.set(partnerId, count);
+          // Temporary block this pair
+          blockedPairs.add(blockKey(socket.id, partnerId));
           logger.info({ reportedId: partnerId, reason: data.reason, count }, "User reported");
           if (count >= 3) {
             const bannedSocket = io.sockets.sockets.get(partnerId);
@@ -235,6 +345,7 @@ export function setupSocketHandlers(io: Server): void {
       socket.emit("report_sent", { success: true });
     });
 
+    // WebRTC relay
     socket.on("webrtc_offer", (data: { roomId: string; offer: RTCSessionDescriptionInit }) => {
       const user = connectedUsers.get(socket.id);
       if (!user || user.roomId !== data.roomId) return;
@@ -247,11 +358,14 @@ export function setupSocketHandlers(io: Server): void {
       socket.to(data.roomId).emit("webrtc_answer", { answer: data.answer });
     });
 
-    socket.on("webrtc_ice_candidate", (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
-      const user = connectedUsers.get(socket.id);
-      if (!user || user.roomId !== data.roomId) return;
-      socket.to(data.roomId).emit("webrtc_ice_candidate", { candidate: data.candidate });
-    });
+    socket.on(
+      "webrtc_ice_candidate",
+      (data: { roomId: string; candidate: RTCIceCandidateInit }) => {
+        const user = connectedUsers.get(socket.id);
+        if (!user || user.roomId !== data.roomId) return;
+        socket.to(data.roomId).emit("webrtc_ice_candidate", { candidate: data.candidate });
+      },
+    );
 
     socket.on("get_stats", () => {
       socket.emit("stats_update", getStats());

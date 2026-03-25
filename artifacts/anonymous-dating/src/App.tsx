@@ -1,20 +1,24 @@
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Switch, Route, Router as WouterRouter } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useAppStore } from "@/store/use-app-store";
 
 // Eagerly loaded (critical path)
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 
-// Lazy loaded (non-critical)
+// Lazy loaded pages
 const Matching = lazy(() => import("@/pages/Matching"));
 const Chat = lazy(() => import("@/pages/Chat"));
 const About = lazy(() => import("@/pages/About"));
 const Privacy = lazy(() => import("@/pages/Privacy"));
 const Terms = lazy(() => import("@/pages/Terms"));
-// SEO Landing Pages (lazy loaded)
+const Profile = lazy(() => import("@/pages/Profile"));
+const FAQ = lazy(() => import("@/pages/FAQ"));
+const Contact = lazy(() => import("@/pages/Contact"));
+// SEO Landing Pages
 const RandomVideoChat = lazy(() => import("@/pages/RandomVideoChat"));
 const AnonymousChat = lazy(() => import("@/pages/AnonymousChat"));
 const ChatWithStrangers = lazy(() => import("@/pages/ChatWithStrangers"));
@@ -38,6 +42,15 @@ function PageLoader() {
   );
 }
 
+function ThemeInit() {
+  const theme = useAppStore((s) => s.theme);
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.classList.toggle("light", theme === "light");
+  }, [theme]);
+  return null;
+}
+
 function Router() {
   return (
     <Suspense fallback={<PageLoader />}>
@@ -48,6 +61,9 @@ function Router() {
         <Route path="/about" component={About} />
         <Route path="/privacy" component={Privacy} />
         <Route path="/terms" component={Terms} />
+        <Route path="/profile" component={Profile} />
+        <Route path="/faq" component={FAQ} />
+        <Route path="/contact" component={Contact} />
         {/* SEO Landing Pages */}
         <Route path="/random-video-chat" component={RandomVideoChat} />
         <Route path="/anonymous-chat" component={AnonymousChat} />
@@ -64,6 +80,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+          <ThemeInit />
           <Router />
         </WouterRouter>
         <Toaster />
