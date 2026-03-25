@@ -1,0 +1,20 @@
+packages:
+  "socket.io-client": "Real-time communication for matchmaking and chat"
+  "framer-motion": "Animations for matchmaking pulse, page transitions, and UI interactions"
+  "date-fns": "Formatting message timestamps"
+  "lucide-react": "Icons for UI"
+  "clsx": "Utility for conditionally joining classNames"
+  "tailwind-merge": "Utility for merging tailwind classes without style conflicts"
+  "zustand": "Simple global state management for user and match state"
+
+images:
+  - path: "artifacts/anonymous-dating/public/images/dark-romance-bg.png"
+    description: "Abstract fluid gradient mesh background in deep indigo, violet, and neon pink with subtle light leaks and a moody, romantic, modern aesthetic."
+    aspect_ratio: "16:9"
+  - path: "artifacts/anonymous-dating/public/images/avatar-placeholder.png"
+    description: "Abstract stylized profile silhouette in glowing magenta and purple neon lines on a dark background."
+    aspect_ratio: "1:1"
+
+notes:
+  - Socket.io is assumed to be running on the same host/port.
+  - WebRTC uses standard browser APIs and public Google STUN servers.

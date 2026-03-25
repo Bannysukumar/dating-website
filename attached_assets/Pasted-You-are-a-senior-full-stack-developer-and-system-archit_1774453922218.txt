@@ -1,0 +1,211 @@
+You are a senior full-stack developer and system architect.
+
+I want to build a modern anonymous dating web application using React.js with the following requirements. Build it step-by-step with clean architecture, production-ready code, and scalable structure.
+
+--------------------------
+🌐 PROJECT OVERVIEW
+--------------------------
+Create a real-time anonymous dating website where users DO NOT need login/signup.
+
+Users will:
+1. Enter Name
+2. Select Gender (Male / Female)
+3. Click Continue
+4. Instantly start matching
+
+System should:
+- Match ONLY Male ↔ Female
+- Prevent Male-Male or Female-Female matching
+- Show "Searching for match..." UI
+- Once matched → open Chat + Video Call interface
+
+--------------------------
+⚙️ TECH STACK
+--------------------------
+Frontend:
+- React.js (Vite or Next.js preferred)
+- Tailwind CSS (modern UI)
+- Socket.io-client (real-time communication)
+- WebRTC (video/audio calls)
+
+Backend:
+- Node.js + Express
+- Socket.io (real-time matching & chat)
+- Simple in-memory store + optional local storage
+
+Database:
+- No login system
+- Use:
+  - In-memory queue for matchmaking
+  - Browser LocalStorage for user session
+  - Optional Firebase Realtime DB (if needed)
+
+--------------------------
+🔥 CORE FEATURES
+--------------------------
+
+1. Anonymous Entry Page:
+- Input: Name
+- Gender Selection (Male/Female)
+- Button: "Start Matching"
+
+2. Matchmaking System:
+- Queue system:
+   - Male queue
+   - Female queue
+- When both available → auto match
+- Generate unique room ID
+
+3. Real-Time Matching:
+- Show animated "Searching..." screen
+- Use Socket.io for instant pairing
+
+4. Chat System:
+- Real-time messaging
+- Emoji support
+- Message timestamps
+- Auto-delete chat after session ends
+
+5. Video Call:
+- WebRTC peer-to-peer connection
+- Camera + Mic permissions
+- Mute / Unmute button
+- End Call button
+
+6. Session System:
+- Store temporary user data in localStorage
+- Auto remove after disconnect
+
+7. Disconnect Handling:
+- If one user leaves → show "User disconnected"
+- Return other user to matching queue
+
+8. Safety Features:
+- Report button
+- Skip user button
+- Auto disconnect after inactivity
+
+9. UI Pages:
+- Home Page
+- Matching Screen
+- Chat + Video Page
+- About Page
+- Privacy Policy
+- Terms & Conditions
+
+--------------------------
+🎨 UI/UX DESIGN
+--------------------------
+- Modern dating style (like Omegle + Tinder mix)
+- Dark + Gradient theme
+- Smooth animations
+- Mobile responsive
+- Clean cards, glassmorphism design
+
+--------------------------
+📊 SEO OPTIMIZATION
+--------------------------
+
+Implement SEO best practices:
+
+1. Meta Tags:
+- Title: "Anonymous Dating & Video Chat - Instant Match"
+- Description: "Connect instantly with real people. No signup required. Anonymous video chat & dating platform."
+
+2. Open Graph:
+- og:title
+- og:description
+- og:image
+
+3. Keywords:
+- anonymous dating
+- video chat strangers
+- random chat app
+- free dating site no signup
+
+4. Sitemap.xml
+5. robots.txt
+6. Fast loading (lazy loading components)
+7. Clean URLs:
+   - /about
+   - /privacy
+   - /terms
+
+--------------------------
+📂 PROJECT STRUCTURE
+--------------------------
+/src
+  /components
+  /pages
+  /hooks
+  /services (socket, webrtc)
+  /utils
+  /styles
+
+/server
+  matchmaking.js
+  socket.js
+  index.js
+
+--------------------------
+🧠 MATCHMAKING LOGIC
+--------------------------
+- Maintain two arrays:
+   maleQueue[]
+   femaleQueue[]
+
+- When user joins:
+   if male → push to maleQueue
+   if female → push to femaleQueue
+
+- If both queues have users:
+   pair first male with first female
+   create room
+   notify both users
+
+--------------------------
+🔐 SECURITY
+--------------------------
+- Validate gender input
+- Prevent spam connections
+- Rate limit socket connections
+- Basic abuse prevention
+
+--------------------------
+⚡ PERFORMANCE
+--------------------------
+- Optimize socket connections
+- Use memoization in React
+- Avoid unnecessary re-renders
+
+--------------------------
+📦 BONUS FEATURES
+--------------------------
+- Typing indicator
+- Online status
+- Match timer
+- Voice call option
+- Dark/light toggle
+- Language selection
+
+--------------------------
+📤 DEPLOYMENT
+--------------------------
+Frontend:
+- Vercel / Netlify
+
+Backend:
+- Render / Railway / VPS
+
+--------------------------
+🎯 FINAL OUTPUT
+--------------------------
+Provide:
+1. Full frontend code (React)
+2. Backend code (Node + Socket.io)
+3. WebRTC implementation
+4. Folder structure
+5. Setup instructions
+6. Deployment steps
+
+Code must be clean, modular, and beginner-friendly with comments.

@@ -1,15 +1,16 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Anonymous Dating & Video Chat API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: stats
+    description: Platform statistics
 paths:
   /healthz:
     get:
@@ -24,6 +25,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get platform stats
+      description: Returns number of online users and active matches
+      responses:
+        "200":
+          description: Platform stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PlatformStats"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +47,19 @@ components:
           type: string
       required:
         - status
-
+    PlatformStats:
+      type: object
+      properties:
+        onlineUsers:
+          type: integer
+          description: Total number of connected users
+        activeMatches:
+          type: integer
+          description: Number of active chat/video matches
+        waitingUsers:
+          type: integer
+          description: Number of users in matchmaking queue
+      required:
+        - onlineUsers
+        - activeMatches
+        - waitingUsers
