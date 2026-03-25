@@ -1,6 +1,6 @@
 {
   "buildCommand": "pnpm --filter @workspace/anonymous-dating run build",
-  "outputDirectory": "artifacts/anonymous-dating/dist/public",
+  "outputDirectory": "dist/public",
   "installCommand": "pnpm install",
   "env": {
     "PORT": "5173",
