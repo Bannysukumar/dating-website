@@ -1,41 +1,74 @@
-<!-- readme-seo: bannysukumar -->
+# Aura - Anonymous Video Chat & Dating | Meet Strangers Instantly
 
-# Dating Website
+Connect instantly with real people via anonymous video chat and text. No signup required. Free random chat with strangers online. Meet someone new right now.
 
-**Dating Website** is an open-source dating website. The code is written mainly in TypeScript and maintained by [Banny Sukumar](https://github.com/Bannysukumar), a blockchain and full-stack developer.
+[![License](https://img.shields.io/github/license/Bannysukumar/dating-website)](https://github.com/Bannysukumar/dating-website/blob/main/LICENSE) [![Stars](https://img.shields.io/github/stars/Bannysukumar/dating-website)](https://github.com/Bannysukumar/dating-website/stargazers) [![Last commit](https://img.shields.io/github/last-commit/Bannysukumar/dating-website)](https://github.com/Bannysukumar/dating-website/commits/main)
 
-This repository is public so developers can read the source, reuse it under the MIT License, and send improvements.
+## Overview
 
-## About this project
+Connect instantly with real people via anonymous video chat and text. No signup required. Free random chat with strangers online. Meet someone new right now.
 
-Dating Website lives at [`github.com/Bannysukumar/dating-website`](https://github.com/Bannysukumar/dating-website). Use it as a starting point for a dating website, or study how the TypeScript parts fit together.
 
-## Tech stack
+What is actually in the repository: `artifacts/`, `attached_assets/`, `lib/`, `scripts/`. GitHub reports the primary language as TypeScript.
 
-- Primary language: **TypeScript**
-- License: **MIT**
-- Maintainer: [Banny Sukumar](https://github.com/Bannysukumar)
+Published site recorded on the repository: https://aura-chat-gray.vercel.app
 
-## Getting started
+## Features
+
+
+- About
+- Anonymous Chat
+- Chat
+
+## Project Structure
+
+```text
+dating-website/
+├── artifacts/
+├── attached_assets/
+├── lib/
+├── scripts/
+├── .npmrc
+├── .replit
+├── .replitignore
+├── package.json
+├── pnpm-lock.yaml
+├── pnpm-workspace.yaml
+├── replit.md
+├── tsconfig.base.json
+├── tsconfig.json
+├── vercel.json
+```
+
+## Getting Started
 
 ```bash
 git clone https://github.com/Bannysukumar/dating-website.git
 cd dating-website
+npm install
 ```
 
-Open the project in your editor. Install dependencies only if this repo already includes a manifest such as `package.json`, `requirements.txt`, or a `.csproj` file.
+Scripts defined in package.json:
+
+- `npm run build` — `pnpm run typecheck && pnpm -r --if-present run build`
+
+## Deployment
+
+- vercel.json is in the repository root.
+- The repository homepage is https://aura-chat-gray.vercel.app.
 
 ## Contributing
 
-Contributions are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) before you open a pull request.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE). Copyright (c) 2026 Banny Sukumar.
+Licensed under MIT. See [LICENSE](LICENSE).
 
 ## Author
+
+[Banny Sukumar](https://github.com/Bannysukumar)
 
 - GitHub: [@Bannysukumar](https://github.com/Bannysukumar)
 - Portfolio: [adepu-sukumar.vercel.app](https://adepu-sukumar.vercel.app/)
 - LinkedIn: [Adepu Sukumar](https://www.linkedin.com/in/adepu-sukumar-59b423351)
-- ORCID: [0009-0007-9766-6579](https://orcid.org/0009-0007-9766-6579)
